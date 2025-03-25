@@ -16,6 +16,8 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -61,6 +63,11 @@ export default function ProductDetailPage() {
           <p className="text-sm text-gray-500">
             Rating: ⭐ {selectedProduct.rating.rate} ({selectedProduct.rating.count} reviews)
           </p>
+          <Link href={`/products/${selectedProduct.id}/edit`}>
+            <Button variant="outline" size="sm">
+              Edit
+            </Button>
+          </Link>
           <div className="flex gap-4 items-center mb-6">
             <button onClick={() => toggleLike(selectedProduct.id)} title="Like" className="text-xl">
               <FiHeart className={isLiked ? 'text-red-500' : 'text-gray-400'} />

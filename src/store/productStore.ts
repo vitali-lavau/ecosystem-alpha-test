@@ -20,12 +20,36 @@ export const useProductStore = create<ProductStore>((set, get) => {
     likedProductIds: savedLikes,
     removedProductIds: savedRemoved,
 
+    setProducts(products) {
+      set({ products });
+    },
+
+    addProduct(product) {
+      const current = get().products;
+      const updated = [...current, product];
+
+      set({ products: updated });
+      localStorage.setItem('customProducts', JSON.stringify(updated.filter((p) => p.id >= 100000)));
+    },
+
     async fetchProducts() {
       set({ loading: true });
+
       try {
-        const data = await getProducts();
+        const [apiProducts, customProductsRaw] = await Promise.all([
+          getProducts(),
+          Promise.resolve(
+            typeof window !== 'undefined'
+              ? JSON.parse(localStorage.getItem('customProducts') || '[]')
+              : [],
+          ),
+        ]);
+
         const removed = get().removedProductIds;
-        const filtered = data.filter((product) => !removed.includes(product.id));
+
+        const merged = [...apiProducts, ...customProductsRaw];
+        const filtered = merged.filter((product) => !removed.includes(product.id));
+
         set({ products: filtered });
       } catch (error) {
         console.error('Ошибка при получении продуктов:', error);
@@ -34,9 +58,17 @@ export const useProductStore = create<ProductStore>((set, get) => {
       }
     },
 
-    async fetchProductById(id) {
+    async fetchProductById(id: number) {
       set({ loading: true });
+
       try {
+        const localProduct = get().products.find((p) => p.id === id);
+
+        if (localProduct) {
+          set({ selectedProduct: localProduct });
+          return;
+        }
+
         const product = await getProductById(id);
         set({ selectedProduct: product });
       } catch (error) {
@@ -67,6 +99,15 @@ export const useProductStore = create<ProductStore>((set, get) => {
         products: state.products.filter((p) => p.id !== id),
         removedProductIds: updated,
       }));
+    },
+
+    updateProduct(updatedProduct) {
+      const current = get().products;
+      const updatedList = current.map((p) => (p.id === updatedProduct.id ? updatedProduct : p));
+      set({ products: updatedList });
+
+      const customProducts = updatedList.filter((p) => p.id >= 100000);
+      localStorage.setItem('customProducts', JSON.stringify(customProducts));
     },
   };
 });
