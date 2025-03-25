@@ -1,3 +1,4 @@
+@import "normalize.css";
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -41,6 +42,19 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --color-primary-custom:     #8FA2CA;   /* голубой акцент — кнопки, ссылки */
+  --color-secondary-custom:   #B5C6B8;   /* мягкий зелёный — карточки, ховеры */
+  --color-accent-custom:      #E4E8F4;   /* дополнительный оттенок — рамки, элементы фона */
+  --color-background-custom:  #EDF2F7;   /* светлый фон — тело страницы */
+  --color-text-custom:        #48523D;   /* основной текст — читаемый, глубокий */
+
+  --header-height: 83px;
+  --header-height-mobile: 68px;
+  --footer-height: 53px;
+  --footer-height-mobile: 60px;
+  --hero-min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  --hero-min-height-mobile: calc(100vh - var(--header-height-mobile) - var(--footer-height-mobile));
 }
 
 :root {
@@ -119,4 +133,39 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-background-custom);
+}
+
+button {
+  font-family: var(--font-heading), serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .4s;
+}
+
+h1 {
+  margin: 0 0 32px;
+  font-size: 42px;
+  font-family: var(--font-heading), serif;
+  line-height: 1.2;
+}
+
+p {
+  margin: 0 0 16px;
+  font-family: var(--font-sans), serif;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.container {
+  padding: 0 16px;
+  margin: 0 auto;
 }
