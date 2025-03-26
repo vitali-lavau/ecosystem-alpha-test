@@ -2,8 +2,8 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: '/ecosystem-alpha-test',
-  assetPrefix: '/ecosystem-alpha-test',
+  // basePath: '/ecosystem-alpha-test',
+  // assetPrefix: '/ecosystem-alpha-test/',
   images: {
     unoptimized: true,
     remotePatterns: [
