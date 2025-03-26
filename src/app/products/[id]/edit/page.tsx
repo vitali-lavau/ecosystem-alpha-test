@@ -43,8 +43,8 @@ export default function EditProductPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Edit Product</h1>
+    <div className="max-w-xl mx-auto p-10">
+      <h1>Edit Product</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Input {...register('title', { required: true })} placeholder="Product title" />

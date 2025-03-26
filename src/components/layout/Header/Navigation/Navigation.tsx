@@ -9,9 +9,13 @@ const NAV_LINKS = [
   { href: '/about', label: 'About' },
 ];
 
-export default function Navigation() {
+interface NavigationProps {
+  className?: string;
+}
+
+export default function Navigation({ className }: NavigationProps) {
   return (
-    <nav>
+    <nav className={className}>
       <ul className="flex items-center gap-6">
         {NAV_LINKS.map((link) => (
           <li key={link.href}>

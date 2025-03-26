@@ -3,10 +3,20 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default function Logo() {
+interface LogoProps {
+  className?: string;
+}
+
+export default function Logo({ className }: LogoProps) {
   return (
-    <Link href="/">
-      <Image src="/images/logo.png" width={50} height={50} alt="Logo" />
+    <Link href="/" className={className}>
+      <Image
+        src="/images/logo.png"
+        width={50}
+        height={70}
+        alt="Logo"
+        className="w-full h-full object-contain"
+      />
     </Link>
   );
 }
