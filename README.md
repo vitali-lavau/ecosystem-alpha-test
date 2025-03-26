@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ecosystem Alpha Test — Next.js SPA
 
-## Getting Started
+This project is a fully client-side rendered **Single Page Application (SPA)** built with [Next.js](https://nextjs.org) and deployed to **GitHub Pages**.
 
-First, run the development server:
+## 🧠 Features
+
+- Full SPA architecture — no SSR or dynamic routing
+- Product catalog with:
+    - Filtering by category, price, and title
+    - Like system
+    - Product creation, editing, and deletion
+- Global state management with Zustand
+- Tailwind CSS styling
+- Responsive layout
+
+---
+
+## 🚀 Getting Started (Development)
+
+To start the local dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can edit src/app/page.tsx to customize the main SPA logic.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+🧾 Deployment on GitHub Pages
+To deploy the project to GitHub Pages, follow these steps:
 
-To learn more about Next.js, take a look at the following resources:
+1. ✅ Enable static export in next.config.ts
+   Before building for production, uncomment the following lines in your next.config.ts:
+```bash
+basePath: '/ecosystem-alpha-test',
+assetPrefix: '/ecosystem-alpha-test/',
+```
+These lines are required so that all assets load correctly from the GitHub Pages subpath.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Your next.config.ts should look like this before building:
+```bash
+const nextConfig = {
+  output: 'export',
+  basePath: '/ecosystem-alpha-test',
+  assetPrefix: '/ecosystem-alpha-test/',
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'fakestoreapi.com',
+        pathname: '**',
+      },
+    ],
+  },
+};
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. 🔨 Build & Deploy
+   Make sure you have gh-pages installed:
+```bash
+npm install gh-pages --save-dev
+```
+Then in your package.json add or update these scripts:
+```bash
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d out"
+}
+```
+Now you can deploy with:
+```bash
+npm run deploy
+```
+✅ Live Demo
+Your site will be available at:
+```bash
+https://<your-github-username>.github.io/<repository-name>/
+```
+🧠 Notes
+GitHub Pages supports static exports only (output: 'export' is required).
 
-## Deploy on Vercel
+If you see ERR_ABORTED 404 errors in the console — you likely forgot to set basePath and assetPrefix before building.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+You must re-build (npm run build) every time before deploying.
