@@ -11,8 +11,8 @@ export default function AboutPage() {
 
         <p>
           The goal of this project is to demonstrate core frontend skills: component design,
-          routing, state management, and user experience. It's designed to be clean, minimal, and
-          educational — perfect for both learning and showcasing as a portfolio piece.
+          routing, state management, and user experience. It&apos;s designed to be clean, minimal,
+          and educational — perfect for both learning and showcasing as a portfolio piece.
         </p>
       </div>
     </div>
