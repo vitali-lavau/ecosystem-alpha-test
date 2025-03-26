@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { ProductActions } from '@/components/products/ProductActions';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -70,44 +71,16 @@ export default function ProductDetailPage() {
               {selectedProduct.rating.count} reviews)
             </p>
 
-            <div className="flex gap-4 items-center mb-4 md:mb-6">
-              <button
-                onClick={() => toggleLike(selectedProduct.id)}
-                title="Like"
-                className="text-xl"
-              >
-                <FiHeart
-                  className={`${isLiked ? 'text-red-500' : 'text-gray-400'} w-8 h-8 hover:text-red-500 transition duration-500`}
-                />
-              </button>
-
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <button title="Delete" className="text-xl text-gray-400 hover:text-red-600">
-                    <FiTrash2 className="w-8 h-8 " />
-                  </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action will permanently remove this product from your list.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => {
-                        removeProduct(selectedProduct.id);
-                        router.push('/products');
-                      }}
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+            <ProductActions
+              productId={selectedProduct.id}
+              isLiked={isLiked}
+              onToggleLike={() => toggleLike(selectedProduct.id)}
+              onRemove={() => {
+                removeProduct(selectedProduct.id);
+                router.push('/products');
+              }}
+              variant="page"
+            />
 
             <Link href={`/products/${selectedProduct.id}/edit`}>
               <Button size="lg">Edit</Button>
