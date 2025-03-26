@@ -63,7 +63,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </p>
       </div>
 
-      <div className="absolute top-0 right-0 flex items-center gap-4 py-2 px-4 border-b border-l border-accent-custom rounded-bl-2xl">
+      <div className="absolute top-0 right-0 flex items-center gap-4 py-2 px-4 border-b border-l border-accent-custom rounded-bl-2xl bg-white">
         <button
           onClick={(e) => {
             e.stopPropagation();
