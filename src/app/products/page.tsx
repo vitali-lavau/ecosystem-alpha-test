@@ -49,11 +49,13 @@ export default function ProductsPage() {
   }, [showFavorites]);
 
   return (
-    <div className="container py-10">
-      <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
-        <h1 className="text-3xl font-bold">Products</h1>
+    <div className="products-page py-6 lg:py-10">
+      <div className="container">
+        <div className="flex items-center mb-4 lg:mb-6">
+          <h1 className="!mb-0">Products</h1>
+        </div>
 
-        <div className="flex gap-4 items-center">
+        <div className="flex items-center mb-4 lg:mb-6 gap-4">
           <Select
             defaultValue="6"
             onValueChange={(value) => {
@@ -80,50 +82,54 @@ export default function ProductsPage() {
             {showFavorites ? 'Show All' : 'Show Favorites'}
           </button>
         </div>
-      </div>
 
-      {loading && <p>Loading products...</p>}
+        {loading && <p>Loading products...</p>}
 
-      {!loading && paginatedProducts.length === 0 && <p>No products to display.</p>}
+        {!loading && paginatedProducts.length === 0 && <p>No products to display.</p>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {paginatedProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-8">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }, (_, i) => (
-                <PaginationItem key={i}>
-                  <PaginationLink
-                    isActive={currentPage === i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
-                  >
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+        <div className="flex flex-wrap gap-y-4 md:gap-4 lg:gap-6">
+          {paginatedProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              className="w-full md:w-[calc(100%/2-8px)] lg:w-[calc(100%/3-16px)]"
+            />
+          ))}
         </div>
-      )}
+
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-4 lg:mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem className="cursor-pointer">
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <PaginationItem key={i} className="cursor-pointer">
+                    <PaginationLink
+                      isActive={currentPage === i + 1}
+                      onClick={() => setCurrentPage(i + 1)}
+                    >
+                      {i + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem className="cursor-pointer">
+                  <PaginationNext
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

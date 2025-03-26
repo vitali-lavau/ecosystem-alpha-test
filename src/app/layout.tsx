@@ -33,8 +33,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className="antialiased">
-        <div className="wrapper min-h-screen flex flex-col">
-          <Header />
+        <div className="wrapper relative min-h-screen flex flex-col">
+          <Header className="sticky top-0 z-10" />
           <main className="main overflow-hidden flex-auto">{children}</main>
           <Footer className="mt-auto" />
         </div>
