@@ -32,6 +32,10 @@ export const useProductStore = create<ProductStore>((set, get) => {
       localStorage.setItem('customProducts', JSON.stringify(updated.filter((p) => p.id >= 100000)));
     },
 
+    setSelectedProduct(product) {
+      set({ selectedProduct: product });
+    },
+
     async fetchProducts() {
       set({ loading: true });
 
