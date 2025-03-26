@@ -3,20 +3,9 @@
 import Image from 'next/image';
 import type { Product } from '@/types/product';
 import { useProductStore } from '@/store/productStore';
-import { FiHeart, FiTrash2 } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from '@/components/ui/alert-dialog';
+import { motion } from 'framer-motion';
+import { ProductActions } from '@/components/products/ProductActions';
 
 interface ProductCardProps {
   product: Product;
@@ -28,16 +17,16 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const isLiked = likedProductIds.includes(product.id);
   const router = useRouter();
 
-  const [dialogOpen] = useState(false);
-
   const handleCardClick = () => {
-    if (!dialogOpen) {
-      router.push(`/products/${product.id}`);
-    }
+    router.push(`/products/${product.id}`);
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
       onClick={handleCardClick}
       className={`${className} relative flex flex-col border border-accent-custom rounded-2xl cursor-pointer shadow-sm bg-white transition duration-500 transform-gpu hover:-translate-y-2`}
     >
@@ -63,46 +52,13 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </p>
       </div>
 
-      <div className="absolute top-0 right-0 flex items-center gap-4 py-2 px-4 border-b border-l border-accent-custom rounded-bl-2xl bg-white">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleLike(product.id);
-          }}
-          title="Like"
-        >
-          <FiHeart
-            className={`${isLiked ? 'text-red-500' : 'text-gray-400'} w-5 h-5 hover:text-red-500 transition duration-500`}
-          />
-        </button>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              className="text-xl text-gray-400 hover:text-red-600"
-              title="Delete"
-            >
-              <FiTrash2 className="w-5 h-5" />
-            </button>
-          </AlertDialogTrigger>
-          <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This product will be removed from the list.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={() => removeProduct(product.id)}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    </div>
+      <ProductActions
+        productId={product.id}
+        isLiked={isLiked}
+        onToggleLike={() => toggleLike(product.id)}
+        onRemove={() => removeProduct(product.id)}
+        variant="card"
+      />
+    </motion.div>
   );
 }
