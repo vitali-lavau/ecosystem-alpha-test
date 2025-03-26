@@ -2,12 +2,15 @@
   "name": "ecosystem-alpha-test",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://vitali-lavau.github.io/ecosystem-alpha-test/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "predeploy": "next build && next export",
+    "deploy": "gh-pages -d out"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.6",
