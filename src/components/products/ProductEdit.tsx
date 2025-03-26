@@ -13,7 +13,7 @@ interface ProductsEditProps {
   onBack: () => void;
 }
 
-export default ({ productId, onBack }: ProductsEditProps) => {
+const ProductEdit = ({ productId, onBack }: ProductsEditProps) => {
   const { selectedProduct, fetchProductById, updateProduct, loading } = useProductStore();
 
   const {
@@ -25,12 +25,17 @@ export default ({ productId, onBack }: ProductsEditProps) => {
 
   useEffect(() => {
     void fetchProductById(productId);
-  }, [productId]);
+  }, [productId, fetchProductById]);
 
   useEffect(() => {
     if (selectedProduct) {
-      const { id, rating, ...formData } = selectedProduct;
-      reset(formData);
+      reset({
+        title: selectedProduct.title,
+        description: selectedProduct.description,
+        price: selectedProduct.price,
+        category: selectedProduct.category,
+        image: selectedProduct.image,
+      });
     }
   }, [selectedProduct, reset]);
 
@@ -60,3 +65,6 @@ export default ({ productId, onBack }: ProductsEditProps) => {
     </div>
   );
 };
+
+ProductEdit.displayName = 'ProductEdit';
+export default ProductEdit;

@@ -9,7 +9,7 @@ interface ProductDetailsProps {
   onEdit: () => void;
 }
 
-export default ({ onEdit }: ProductDetailsProps) => {
+const ProductDetails = ({ onEdit }: ProductDetailsProps) => {
   const { selectedProduct, likedProductIds, toggleLike, removeProduct, setSelectedProduct } =
     useProductStore();
   const isLiked = selectedProduct ? likedProductIds.includes(selectedProduct.id) : false;
@@ -64,3 +64,5 @@ export default ({ onEdit }: ProductDetailsProps) => {
     </div>
   );
 };
+
+export default ProductDetails;
