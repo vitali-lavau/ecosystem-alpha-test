@@ -2,16 +2,18 @@
 
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams, useRouter } from 'next/navigation';
 import { useProductStore } from '@/store/productStore';
 import type { Product } from '@/types/product';
 import { ProductForm } from '@/components/products/ProductsForm';
 
 type ProductFormData = Omit<Product, 'id' | 'rating'>;
 
-export default function EditProductPage() {
-  const { id } = useParams();
-  const router = useRouter();
+interface ProductsEditProps {
+  productId: number;
+  onBack: () => void;
+}
+
+export default ({ productId, onBack }: ProductsEditProps) => {
   const { selectedProduct, fetchProductById, updateProduct, loading } = useProductStore();
 
   const {
@@ -22,15 +24,12 @@ export default function EditProductPage() {
   } = useForm<ProductFormData>();
 
   useEffect(() => {
-    if (id) {
-      void fetchProductById(Number(id));
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }
-  }, [id]);
+    void fetchProductById(productId);
+  }, [productId]);
 
   useEffect(() => {
     if (selectedProduct) {
-      const formData = (({ id, rating, ...rest }) => rest)(selectedProduct);
+      const { id, rating, ...formData } = selectedProduct;
       reset(formData);
     }
   }, [selectedProduct, reset]);
@@ -38,10 +37,10 @@ export default function EditProductPage() {
   const onSubmit = (data: ProductFormData) => {
     updateProduct({
       ...data,
-      id: Number(id),
+      id: productId,
       rating: selectedProduct?.rating || { rate: 0, count: 0 },
     });
-    router.push(`/products/${id}`);
+    onBack();
   };
 
   if (loading || !selectedProduct) {
@@ -60,4 +59,4 @@ export default function EditProductPage() {
       />
     </div>
   );
-}
+};

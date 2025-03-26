@@ -2,7 +2,6 @@
 
 import { useForm } from 'react-hook-form';
 import { useProductStore } from '@/store/productStore';
-import { useRouter } from 'next/navigation';
 import { ProductForm } from '@/components/products/ProductsForm';
 
 type NewProductForm = {
@@ -13,14 +12,18 @@ type NewProductForm = {
   image: string;
 };
 
-export default function CreateProductPage() {
+interface ProductsCreateProps {
+  onSuccess: () => void;
+}
+
+export default function ProductsCreate({ onSuccess }: ProductsCreateProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<NewProductForm>();
+
   const { addProduct } = useProductStore();
-  const router = useRouter();
 
   const onSubmit = (data: NewProductForm) => {
     const newProduct = {
@@ -33,7 +36,7 @@ export default function CreateProductPage() {
     };
 
     addProduct(newProduct);
-    router.push('/products');
+    onSuccess(); // вернуться назад к каталогу
   };
 
   return (

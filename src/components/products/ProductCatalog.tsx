@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useProductStore } from '@/store/productStore';
-import { ProductCard } from '@/components/products/ProductsCard';
+import { ProductCard } from '@/components/products/ProductCard';
 import {
   Pagination,
   PaginationContent,
@@ -21,16 +21,18 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-export default function ProductsPage() {
+export default function ProductCatalog() {
   const { products, fetchProducts, loading, likedProductIds } = useProductStore();
+
   const [showFavorites, setShowFavorites] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState<number | 'all'>(6);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const categories = ['all', ...new Set(products.map((p) => p.category))];
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const categories = ['all', ...new Set(products.map((p) => p.category))];
 
   useEffect(() => {
     if (products.length === 0) {
@@ -38,24 +40,31 @@ export default function ProductsPage() {
     }
   }, [products.length, fetchProducts]);
 
-  let filteredProducts = showFavorites
-    ? products.filter((product) => likedProductIds.includes(product.id))
-    : products;
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [showFavorites, selectedCategory, minPrice, maxPrice]);
+
+  let filteredProducts = products;
+
+  if (showFavorites) {
+    filteredProducts = filteredProducts.filter((p) => likedProductIds.includes(p.id));
+  }
 
   if (selectedCategory !== 'all') {
-    filteredProducts = filteredProducts.filter((product) => product.category === selectedCategory);
+    filteredProducts = filteredProducts.filter((p) => p.category === selectedCategory);
   }
 
   if (minPrice) {
-    filteredProducts = filteredProducts.filter((product) => product.price >= parseFloat(minPrice));
-  }
-  if (maxPrice) {
-    filteredProducts = filteredProducts.filter((product) => product.price <= parseFloat(maxPrice));
+    filteredProducts = filteredProducts.filter((p) => p.price >= parseFloat(minPrice));
   }
 
-  if (searchQuery.trim() !== '') {
-    filteredProducts = filteredProducts.filter((product) =>
-      product.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  if (maxPrice) {
+    filteredProducts = filteredProducts.filter((p) => p.price <= parseFloat(maxPrice));
+  }
+
+  if (searchQuery.trim()) {
+    filteredProducts = filteredProducts.filter((p) =>
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }
 
@@ -68,14 +77,10 @@ export default function ProductsPage() {
       ? filteredProducts
       : filteredProducts.slice(startIndex, startIndex + productsPerPage);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [showFavorites, selectedCategory, minPrice, maxPrice]);
-
   return (
-    <div className="products-page py-6 lg:py-10">
+    <div className="products-page">
       <div className="container">
-        <div className="flex items-center mb-4 lg:mb-6">
+        <div className="mb-4 lg:mb-6 flex justify-between items-center flex-wrap gap-4">
           <h1 className="!mb-0">Products</h1>
         </div>
 
@@ -94,8 +99,8 @@ export default function ProductsPage() {
           <Select
             value={selectedCategory}
             onValueChange={(value) => {
-              setCurrentPage(1);
               setSelectedCategory(value);
+              setCurrentPage(1);
             }}
           >
             <SelectTrigger className="w-full md:w-auto">
@@ -114,10 +119,7 @@ export default function ProductsPage() {
             type="number"
             placeholder="Min price"
             value={minPrice}
-            onChange={(e) => {
-              setCurrentPage(1);
-              setMinPrice(e.target.value);
-            }}
+            onChange={(e) => setMinPrice(e.target.value)}
             className="w-full md:w-[160px]"
           />
 
@@ -125,56 +127,58 @@ export default function ProductsPage() {
             type="number"
             placeholder="Max price"
             value={maxPrice}
-            onChange={(e) => {
-              setCurrentPage(1);
-              setMaxPrice(e.target.value);
-            }}
+            onChange={(e) => setMaxPrice(e.target.value)}
             className="w-full md:w-[160px]"
           />
 
-          <Button size="sm" onClick={() => setShowFavorites((prev) => !prev)} className="md:hidden">
-            {showFavorites ? 'Show All' : 'Show Favorites'}
-          </Button>
           <Button
-            size="lg"
+            variant="default"
             onClick={() => setShowFavorites((prev) => !prev)}
             className="hidden md:block"
           >
             {showFavorites ? 'Show All' : 'Show Favorites'}
           </Button>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => setShowFavorites((prev) => !prev)}
+            className="block md:hidden"
+          >
+            {showFavorites ? 'Show All' : 'Show Favorites'}
+          </Button>
 
           <Button
-            size="sm"
+            variant="default"
             onClick={() => {
+              setSearchQuery('');
               setSelectedCategory('all');
               setMinPrice('');
               setMaxPrice('');
               setShowFavorites(false);
               setCurrentPage(1);
-              setSearchQuery('');
             }}
-            className="md:hidden"
+            className="hidden md:block"
           >
             Reset Filters
           </Button>
           <Button
-            size="lg"
+            variant="default"
+            size="sm"
             onClick={() => {
+              setSearchQuery('');
               setSelectedCategory('all');
               setMinPrice('');
               setMaxPrice('');
               setShowFavorites(false);
               setCurrentPage(1);
-              setSearchQuery('');
             }}
-            className="hidden md:block"
+            className="block md:hidden"
           >
             Reset Filters
           </Button>
         </div>
 
         {loading && <p>Loading products...</p>}
-
         {!loading && paginatedProducts.length === 0 && <p>No products to display.</p>}
 
         <div className="flex flex-wrap gap-y-4 md:gap-4 lg:gap-6">
@@ -222,6 +226,7 @@ export default function ProductsPage() {
                     <PaginationLink
                       isActive={currentPage === i + 1}
                       onClick={() => setCurrentPage(i + 1)}
+                      className="cursor-pointer"
                     >
                       {i + 1}
                     </PaginationLink>

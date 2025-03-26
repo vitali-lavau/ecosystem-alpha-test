@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import './globals.css';
 import React from 'react';
-import Header from '@/components/layout/Header/Header';
-import Footer from '@/components/layout/Footer/Footer';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -33,10 +31,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className="antialiased">
-        <div className="wrapper relative min-h-screen flex flex-col">
-          <Header className="sticky top-0 z-10" />
-          <main className="main overflow-hidden flex-auto">{children}</main>
-          <Footer className="mt-auto" />
+        <div className="wrapper relative min-h-screen">
+          <main className="main overflow-hidden">{children}</main>
         </div>
       </body>
     </html>

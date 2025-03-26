@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import type { Product } from '@/types/product';
 import { useProductStore } from '@/store/productStore';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ProductActions } from '@/components/products/ProductActions';
 
@@ -13,12 +12,11 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, className }: ProductCardProps) {
-  const { likedProductIds, toggleLike, removeProduct } = useProductStore();
+  const { likedProductIds, toggleLike, removeProduct, setSelectedProduct } = useProductStore();
   const isLiked = likedProductIds.includes(product.id);
-  const router = useRouter();
 
   const handleCardClick = () => {
-    router.push(`/products/${product.id}`);
+    setSelectedProduct(product); // теперь это действие вместо router.push
   };
 
   return (
