@@ -13,4 +13,5 @@ export interface ProductStore {
   setProducts: (products: Product[]) => void;
   addProduct: (product: Product) => void;
   updateProduct: (updatedProduct: Product) => void;
+  setSelectedProduct: (product: Product | null) => void;
 }
