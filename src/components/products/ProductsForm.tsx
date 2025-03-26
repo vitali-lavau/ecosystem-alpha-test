@@ -21,7 +21,7 @@ export class ProductForm extends Component<ProductFormProps> {
   static defaultProps = { isEdit: false };
 
   render() {
-    let { onSubmit, register, errors, handleSubmit, isEdit } = this.props;
+    const { onSubmit, register, errors, handleSubmit, isEdit } = this.props;
     return (
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
