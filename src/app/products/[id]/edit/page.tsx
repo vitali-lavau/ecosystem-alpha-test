@@ -24,12 +24,13 @@ export default function EditProductPage() {
   useEffect(() => {
     if (id) {
       void fetchProductById(Number(id));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }
   }, [id]);
 
   useEffect(() => {
     if (selectedProduct) {
-      const { id, rating, ...formData } = selectedProduct;
+      const formData = (({ id, rating, ...rest }) => rest)(selectedProduct);
       reset(formData);
     }
   }, [selectedProduct, reset]);
