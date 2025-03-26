@@ -18,12 +18,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function ProductsPage() {
   const { products, fetchProducts, loading, likedProductIds } = useProductStore();
   const [showFavorites, setShowFavorites] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState<number | 'all'>(6);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const categories = ['all', ...new Set(products.map((p) => p.category))];
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (products.length === 0) {
@@ -31,9 +38,26 @@ export default function ProductsPage() {
     }
   }, [products.length, fetchProducts]);
 
-  const filteredProducts = showFavorites
+  let filteredProducts = showFavorites
     ? products.filter((product) => likedProductIds.includes(product.id))
     : products;
+
+  if (selectedCategory !== 'all') {
+    filteredProducts = filteredProducts.filter((product) => product.category === selectedCategory);
+  }
+
+  if (minPrice) {
+    filteredProducts = filteredProducts.filter((product) => product.price >= parseFloat(minPrice));
+  }
+  if (maxPrice) {
+    filteredProducts = filteredProducts.filter((product) => product.price <= parseFloat(maxPrice));
+  }
+
+  if (searchQuery.trim() !== '') {
+    filteredProducts = filteredProducts.filter((product) =>
+      product.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }
 
   const totalPages =
     productsPerPage === 'all' ? 1 : Math.ceil(filteredProducts.length / productsPerPage);
@@ -46,7 +70,7 @@ export default function ProductsPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [showFavorites]);
+  }, [showFavorites, selectedCategory, minPrice, maxPrice]);
 
   return (
     <div className="products-page py-6 lg:py-10">
@@ -55,32 +79,98 @@ export default function ProductsPage() {
           <h1 className="!mb-0">Products</h1>
         </div>
 
-        <div className="flex items-center mb-4 lg:mb-6 gap-4">
+        <div className="flex items-center flex-wrap mb-4 lg:mb-6 gap-3 md:gap-4">
+          <Input
+            type="text"
+            placeholder="Search by title..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full md:w-fit"
+          />
+
           <Select
-            defaultValue="6"
+            value={selectedCategory}
             onValueChange={(value) => {
               setCurrentPage(1);
-              setProductsPerPage(value === 'all' ? 'all' : parseInt(value));
+              setSelectedCategory(value);
             }}
           >
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Per page" />
+            <SelectTrigger className="w-full md:w-auto">
+              <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="6">6 per page</SelectItem>
-              <SelectItem value="12">12 per page</SelectItem>
-              <SelectItem value="24">24 per page</SelectItem>
-              <SelectItem value="32">32 per page</SelectItem>
-              <SelectItem value="all">All</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat[0].toUpperCase() + cat.slice(1)}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
-          <button
+          <Input
+            type="number"
+            placeholder="Min price"
+            value={minPrice}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setMinPrice(e.target.value);
+            }}
+            className="w-full md:w-[160px]"
+          />
+
+          <Input
+            type="number"
+            placeholder="Max price"
+            value={maxPrice}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setMaxPrice(e.target.value);
+            }}
+            className="w-full md:w-[160px]"
+          />
+
+          <Button size="sm" onClick={() => setShowFavorites((prev) => !prev)} className="md:hidden">
+            {showFavorites ? 'Show All' : 'Show Favorites'}
+          </Button>
+          <Button
+            size="lg"
             onClick={() => setShowFavorites((prev) => !prev)}
-            className="text-sm px-4 py-2 rounded-md border hover:bg-gray-100 transition"
+            className="hidden md:block"
           >
             {showFavorites ? 'Show All' : 'Show Favorites'}
-          </button>
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={() => {
+              setSelectedCategory('all');
+              setMinPrice('');
+              setMaxPrice('');
+              setShowFavorites(false);
+              setCurrentPage(1);
+              setSearchQuery('');
+            }}
+            className="md:hidden"
+          >
+            Reset Filters
+          </Button>
+          <Button
+            size="lg"
+            onClick={() => {
+              setSelectedCategory('all');
+              setMinPrice('');
+              setMaxPrice('');
+              setShowFavorites(false);
+              setCurrentPage(1);
+              setSearchQuery('');
+            }}
+            className="hidden md:block"
+          >
+            Reset Filters
+          </Button>
         </div>
 
         {loading && <p>Loading products...</p>}
@@ -97,9 +187,28 @@ export default function ProductsPage() {
           ))}
         </div>
 
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-4 lg:mt-6">
-            <Pagination>
+        <div className="flex flex-col md:flex-row items-center justify-between mt-4 lg:mt-6">
+          <Select
+            defaultValue="6"
+            onValueChange={(value) => {
+              setCurrentPage(1);
+              setProductsPerPage(value === 'all' ? 'all' : parseInt(value));
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Per page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="6">6 per page</SelectItem>
+              <SelectItem value="12">12 per page</SelectItem>
+              <SelectItem value="24">24 per page</SelectItem>
+              <SelectItem value="32">32 per page</SelectItem>
+              <SelectItem value="all">All</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {totalPages > 1 && (
+            <Pagination className="w-fit mt-4 md:m-0">
               <PaginationContent>
                 <PaginationItem className="cursor-pointer">
                   <PaginationPrevious
@@ -127,8 +236,8 @@ export default function ProductsPage() {
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
